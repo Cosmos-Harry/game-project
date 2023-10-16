@@ -6,7 +6,7 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 *.vscode
-src/assets
+src/assets/
 
 
 # Vendors
