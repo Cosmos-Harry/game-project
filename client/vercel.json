@@ -1,9 +1,8 @@
 {
-    "rewrites": [
-      {
-        "source": "/assets/(.*)",
-        "destination": "src/assets/$1"
-      }
-    ]
-  }
-  
+  "rewrites": [
+    {
+      "source": "src/assets/(.*)",
+      "destination": "/src/assets/$1"
+    }
+  ]
+}
