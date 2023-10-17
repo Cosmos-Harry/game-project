@@ -1,7 +1,9 @@
 {
-    "public": true,
-    "static": {
-      "source": "/assets",
-      "destination": "src/assets"
-    }
+    "rewrites": [
+      {
+        "source": "/assets/(.*)",
+        "destination": "src/assets/$1"
+      }
+    ]
   }
+  
