@@ -1,0 +1,7 @@
+{
+    "public": true,
+    "static": {
+      "source": "/assets",
+      "destination": "src/assets"
+    }
+  }
