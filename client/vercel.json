@@ -1,10 +1,7 @@
 {
-    "version": 2,
-    "builds": [
-      { "src": "dist/**", "use": "@vercel/node" }
-    ],
-    "routes": [
-      { "src": "/(.*\\.(js|css|png|jpg))", "dest": "/$1" }
-    ]
+    "public": true,
+    "static": {
+      "source": "/webpack/dist/assets",
+      "destination": "/assets"
+    }
   }
-  
