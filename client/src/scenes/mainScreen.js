@@ -7,7 +7,7 @@ export default class MainScreen extends Phaser.Scene {
     });
   }
   preload() {
-    this.load.image("background", "/assets/background.png");
+    this.load.image("background", "src/assets/background.png");
   }
 
   create() {
