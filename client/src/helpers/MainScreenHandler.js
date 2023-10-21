@@ -33,11 +33,11 @@ export default class MainScreenHandler {
         scene.play.setShadow(4, 4, "rgba(0,0,0,3.5)", 10, true, true);
       });
 
-      scene.settings = scene.add.text(540, 560, "SETTINGS", {
+      scene.settings = scene.add.text(540, 560, "SETTINGS  ", {
         fontFamily: "Gluten",
         fontSize: "30px",
         stroke: "#ad4d42",
-        strokeThickness: "5",
+        strokeThickness: "10",
         shadow: {
           offsetX: 4,
           offsetY: 4,
@@ -61,11 +61,11 @@ export default class MainScreenHandler {
         fontFamily: "Gluten",
         fontSize: "22px",
         stroke: "#ad4d42",
-        strokeThickness: "5",
+        strokeThickness: "4",
         shadow: {
-          offsetX: 1,
-          offsetY: 1,
-          blur: 1,
+          offsetX: 4,
+          offsetY: 4,
+          blur: 4,
           stroke: true,
           fill: true,
         },
@@ -74,11 +74,11 @@ export default class MainScreenHandler {
       scene.source.setInteractive();
 
       scene.source.on("pointerover", () => {
-        scene.source.setShadow(0, 8, "rgba(90,90,90,7.5)", 8, true, true);
+        scene.source.setShadow(6, 6, "rgba(0,0,0,3.5)", 8, true, true);
       });
 
       scene.source.on("pointerout", () => {
-        scene.source.setShadow(4, 4, "rgba(0,0,0,3.5)", 10, true, true);
+        scene.source.setShadow(4, 4, "rgba(0,0,0,3.5)", 4, true, true);
       });
     };
 
