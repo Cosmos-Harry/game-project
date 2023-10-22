@@ -6,10 +6,10 @@ const config = {
   type: Phaser.AUTO,
   scale: {
     mode: Phaser.Scale.FIT,
-    // width: 1200,
-    // height: 800,
-    width: window.innerWidth, // for mobile
-    height: window.innerHeight, // for mobile 
+    width: 1200,
+    height: 800,
+    // width: window.innerWidth, // for mobile
+    // height: window.innerHeight, // for mobile 
   },
   scene: [MainScreen, Game],
   physics: {
