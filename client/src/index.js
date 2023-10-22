@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+// import Phaser from "phaser";
 import MainScreen from "./scenes/mainScreen.js";
 import Game from "./scenes/game.js";
 
