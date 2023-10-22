@@ -27,6 +27,8 @@ module.exports = merge(base, {
     ],
   },
   plugins: [
-    new CopyWebpackPlugin([{ from: "src/assets", to: "src/assets" }]), // Configure CopyWebpackPlugin
+    new CopyWebpackPlugin([{ from: "src/assets", to: "src/assets" }]),
+    new CopyWebpackPlugin([{ from: "scripts", to: "scripts" }]),
+    new CopyWebpackPlugin([{ from: "style.css", to: "style.css" }]),
   ],
 });
