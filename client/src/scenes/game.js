@@ -10,7 +10,7 @@ export default class Game extends Phaser.Scene {
     this.load.image("background", "src/assets/background.png");
     this.load.image("player", "src/assets/player.png");
     this.load.image("player-hit", "src/assets/player-hit.png");
-    this.load.spritesheet("shuttle", "src/assets/shuttle.png", {
+    this.load.spritesheet("shuttle", "src/assets/shuttle.PNG", {
       frameWidth: 269, // Width of each frame
       frameHeight: 648, // Height of each frame
     });
