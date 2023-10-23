@@ -6,19 +6,17 @@ const config = {
   type: Phaser.AUTO,
   scale: {
     mode: Phaser.Scale.RESIZE,
-    parent:"game-container",
-    width: "100%", 
-    height: "100%",
+    parent: "game-container",
+    autoCenter: Phaser.Scale.CENTER_BOTH,
     // width: 1200,
     // height: 800,
     // width: window.innerWidth, // for mobile
-    // height: window.innerHeight, // for mobile 
+    // height: window.innerHeight, // for mobile
   },
   scene: [MainScreen, Game],
   physics: {
     default: "arcade", // Set the default physics engine to 'arcade'
-    arcade: {
-    },
+    arcade: {},
   },
 };
 

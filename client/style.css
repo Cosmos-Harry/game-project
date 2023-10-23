@@ -1,0 +1,8 @@
+@media screen and (max-width: 767px) {
+  /* Add specific styles for small screens here */
+  /* You can adjust font sizes, padding, margins, or other properties */
+  #game-container {
+    /* width: 100%;
+    text-align: center; */
+  }
+}
