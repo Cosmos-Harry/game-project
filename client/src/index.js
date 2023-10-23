@@ -5,9 +5,12 @@ import Game from "./scenes/game.js";
 const config = {
   type: Phaser.AUTO,
   scale: {
-    mode: Phaser.Scale.FIT,
-    width: 1200,
-    height: 800,
+    mode: Phaser.Scale.RESIZE,
+    parent:"game-container",
+    width: "100%", 
+    height: "100%",
+    // width: 1200,
+    // height: 800,
     // width: window.innerWidth, // for mobile
     // height: window.innerHeight, // for mobile 
   },
