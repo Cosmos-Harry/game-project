@@ -93,7 +93,7 @@ export default class Game extends Phaser.Scene {
               offsetX: 4,
               offsetY: 4,
               blur: 10,
-              stroke: true,
+              stroke: false,
               fill: true,
             },
           });
@@ -108,7 +108,7 @@ export default class Game extends Phaser.Scene {
               offsetX: 4,
               offsetY: 4,
               blur: 4,
-              stroke: true,
+              stroke: false,
               fill: true,
             },
           });
@@ -118,11 +118,11 @@ export default class Game extends Phaser.Scene {
 
           // Add pointerover and pointerout event listeners
           restartButton.on("pointerover", () => {
-            restartButton.setShadow(6, 6, "rgba(0, 0, 0, 0.5)", true, true);
+            restartButton.setShadow(6, 6, "rgba(0, 0, 0, 0.5)", false, true);
           });
 
           restartButton.on("pointerout", () => {
-            restartButton.setShadow(4, 4, "rgba(0, 0, 0, 0.5)", true, true);
+            restartButton.setShadow(4, 4, "rgba(0, 0, 0, 0.5)", false, true);
           });
 
           restartButton.on("pointerdown", () => {

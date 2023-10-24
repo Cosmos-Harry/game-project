@@ -13,11 +13,11 @@ export default class MainScreen extends Phaser.Scene {
   create() {
     this.add.image(200, 400, "background");
 
-    const play = this.add.text(120, 400, "PLAY", {
+    const play = this.add.text(135, 420, "PLAY", {
       fontFamily: "Gluten",
-      fontSize: "60px",
+      fontSize: "50px",
       stroke: "#ad4d42",
-      strokeThickness: "10",
+      strokeThickness: "5",
       shadow: {
         offsetX: 4,
         offsetY: 4,
@@ -41,11 +41,11 @@ export default class MainScreen extends Phaser.Scene {
       play.setShadow(4, 4, "rgba(0,0,0,3.5)", 10, false, true);
     });
 
-    const settings = this.add.text(155, 500, "SETTINGS", {
+    const settings = this.add.text(165, 520, "SETTINGS", {
       fontFamily: "Gluten",
-      fontSize: "18px",
+      fontSize: "15px",
       stroke: "#ad4d42",
-      strokeThickness: "7",
+      strokeThickness: "3",
       shadow: {
         offsetX: 4,
         offsetY: 4,
@@ -65,11 +65,11 @@ export default class MainScreen extends Phaser.Scene {
       settings.setShadow(4, 4, "rgba(0,0,0,3.5)", 7, false, true);
     });
 
-    const source = this.add.text(310, 20, "SOURCE", {
+    const source = this.add.text(320, 20, "SOURCE", {
       fontFamily: "Gluten",
-      fontSize: "16px",
+      fontSize: "14px",
       stroke: "#ad4d42",
-      strokeThickness: "4",
+      strokeThickness: "2",
       shadow: {
         offsetX: 4,
         offsetY: 4,
