@@ -27,10 +27,27 @@ export default class Game extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, 400, 800); // Set world bounds
     player.setCollideWorldBounds(true); // Enable collisions between the player and the world bounds
     player.setInteractive(); // Enable input for the player sprite
-    this.input.on("pointermove", function (pointer) {
-      player.x = pointer.x;
-      player.y = pointer.y;
-    }); // Set up event listeners for mouse input
+
+    // Set up event listeners for mouse input
+    let initialTouchX;
+    let initialTouchY;
+    const sensitivity = 0.1;
+
+    this.input.on("pointerdown", function (pointer) {
+      initialTouchX = pointer.x;
+      initialTouchY = pointer.y;
+    });
+
+    this.input.on("pointermove", (pointer) => {
+      if (initialTouchX !== undefined && initialTouchY !== undefined) {
+        // Calculate the offset
+        const offsetX = (pointer.x - initialTouchX) * sensitivity;
+        const offsetY = (pointer.y - initialTouchY) * sensitivity;
+        // Update the player's position
+        player.x += offsetX;
+        player.y += offsetY;
+      }
+    });
 
     //Text element to display the timer
     const timerText = this.add.text(110, 20, "Score: 0", {
@@ -209,5 +226,22 @@ export default class Game extends Phaser.Scene {
     this.GameScreenHandler.buildUI();
   }
 
-  update() {}
+  update() {
+    // update the player's position based on the offset between the initial touch and the current touch
+    this.input.on("pointermove", function (pointer) {
+      if (initialTouchX !== undefined && initialTouchY !== undefined) {
+        // Calculate the offset
+        const offsetX = pointer.x - initialTouchX;
+        const offsetY = pointer.y - initialTouchY;
+
+        // Update the player's position
+        player.x += offsetX;
+        player.y += offsetY;
+
+        // Update the initial touch position for the next frame
+        initialTouchX = pointer.x;
+        initialTouchY = pointer.y;
+      }
+    });
+  }
 }
