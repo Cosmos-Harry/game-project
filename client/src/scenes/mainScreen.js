@@ -13,16 +13,16 @@ export default class MainScreen extends Phaser.Scene {
   create() {
     this.add.image(200, 400, "background");
 
-    const play = this.add.text(60, 400, "PLAY", {
+    const play = this.add.text(120, 400, "PLAY", {
       fontFamily: "Gluten",
-      fontSize: "100px",
+      fontSize: "60px",
       stroke: "#ad4d42",
       strokeThickness: "10",
       shadow: {
         offsetX: 4,
         offsetY: 4,
         blur: 10,
-        stroke: true,
+        stroke: false,
         fill: true,
       },
     });
@@ -34,23 +34,23 @@ export default class MainScreen extends Phaser.Scene {
     });
 
     play.on("pointerover", () => {
-      play.setShadow(6, 6, "rgba(0,0,0,3.5)", 14, true, true);
+      play.setShadow(6, 6, "rgba(0,0,0,3.5)", 14, false, true);
     });
 
     play.on("pointerout", () => {
-      play.setShadow(4, 4, "rgba(0,0,0,3.5)", 10, true, true);
+      play.setShadow(4, 4, "rgba(0,0,0,3.5)", 10, false, true);
     });
 
-    const settings = this.add.text(120, 520, "SETTINGS  ", {
+    const settings = this.add.text(155, 500, "SETTINGS", {
       fontFamily: "Gluten",
-      fontSize: "30px",
+      fontSize: "18px",
       stroke: "#ad4d42",
-      strokeThickness: "10",
+      strokeThickness: "7",
       shadow: {
         offsetX: 4,
         offsetY: 4,
-        blur: 10,
-        stroke: true,
+        blur: 7,
+        stroke: false,
         fill: true,
       },
     });
@@ -58,23 +58,23 @@ export default class MainScreen extends Phaser.Scene {
     settings.setInteractive();
 
     settings.on("pointerover", () => {
-      settings.setShadow(6, 6, "rgba(0,0,0,3.5)", 14, true, true);
+      settings.setShadow(6, 6, "rgba(0,0,0,3.5)", 10, false, true);
     });
 
     settings.on("pointerout", () => {
-      settings.setShadow(4, 4, "rgba(0,0,0,3.5)", 10, true, true);
+      settings.setShadow(4, 4, "rgba(0,0,0,3.5)", 7, false, true);
     });
 
-    const source = this.add.text(290, 20, "SOURCE", {
+    const source = this.add.text(310, 20, "SOURCE", {
       fontFamily: "Gluten",
-      fontSize: "22px",
+      fontSize: "16px",
       stroke: "#ad4d42",
       strokeThickness: "4",
       shadow: {
         offsetX: 4,
         offsetY: 4,
         blur: 4,
-        stroke: true,
+        stroke: false,
         fill: true,
       },
     });
@@ -82,11 +82,11 @@ export default class MainScreen extends Phaser.Scene {
     source.setInteractive();
 
     source.on("pointerover", () => {
-      source.setShadow(6, 6, "rgba(0,0,0,3.5)", 8, true, true);
+      source.setShadow(6, 6, "rgba(0,0,0,3.5)", 7, false, true);
     });
 
     source.on("pointerout", () => {
-      source.setShadow(4, 4, "rgba(0,0,0,3.5)", 4, true, true);
+      source.setShadow(4, 4, "rgba(0,0,0,3.5)", 4, false, true);
     });
 
     this.MainScreenHandler = new MainScreenHandler(this);
