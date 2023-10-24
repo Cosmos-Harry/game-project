@@ -11,7 +11,7 @@ export default class MainScreen extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(620, 400, "background");
+    this.add.image(200, 400, "background");
     this.MainScreenHandler = new MainScreenHandler(this);
     this.MainScreenHandler.buildUI();
   }

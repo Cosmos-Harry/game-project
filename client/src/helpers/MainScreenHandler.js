@@ -5,7 +5,7 @@ export default class MainScreenHandler {
       //   .text(570, 200, "PLAY")
       //   .setFontSize(50)
       //   .setFontFamily("Trebuchet MS")
-      scene.play = scene.add.text(480, 440, "PLAY", {
+      scene.play = scene.add.text(60, 400, "PLAY", {
         fontFamily: "Gluten",
         fontSize: "100px",
         stroke: "#ad4d42",
@@ -33,7 +33,7 @@ export default class MainScreenHandler {
         scene.play.setShadow(4, 4, "rgba(0,0,0,3.5)", 10, true, true);
       });
 
-      scene.settings = scene.add.text(540, 560, "SETTINGS  ", {
+      scene.settings = scene.add.text(120, 520, "SETTINGS  ", {
         fontFamily: "Gluten",
         fontSize: "30px",
         stroke: "#ad4d42",
@@ -57,7 +57,7 @@ export default class MainScreenHandler {
         scene.settings.setShadow(4, 4, "rgba(0,0,0,3.5)", 10, true, true);
       });
 
-      scene.source = scene.add.text(1070, 20, "SOURCE", {
+      scene.source = scene.add.text(290, 20, "SOURCE", {
         fontFamily: "Gluten",
         fontSize: "22px",
         stroke: "#ad4d42",

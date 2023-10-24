@@ -18,13 +18,13 @@ export default class Game extends Phaser.Scene {
 
   create() {
     // Add background image
-    const bg = this.add.image(620, 400, "background");
+    const bg = this.add.image(200, 400, "background");
     bg.setAlpha(0.8); // Changed opacity
 
     //Add player image as "physics.add.sprite" to make the gravity/bounds work
-    const player = this.physics.add.sprite(800, 150, "player");
-    player.setScale(0.1); // Reduced the size of the player image
-    this.physics.world.setBounds(0, 0, 1200, 800); // Set world bounds
+    const player = this.physics.add.sprite(200, 450, "player");
+    player.setScale(0.05); // Reduced the size of the player image
+    this.physics.world.setBounds(0, 0, 400, 800); // Set world bounds
     player.setCollideWorldBounds(true); // Enable collisions between the player and the world bounds
     player.setInteractive(); // Enable input for the player sprite
     this.input.on("pointermove", function (pointer) {
@@ -33,7 +33,7 @@ export default class Game extends Phaser.Scene {
     }); // Set up event listeners for mouse input
 
     //Text element to display the timer
-    const timerText = this.add.text(550, 20, "Score: 0", {
+    const timerText = this.add.text(110, 20, "Score: 0", {
       fontFamily: "Gluten",
       fontSize: "40px",
       fill: "#ffffff",
@@ -61,8 +61,8 @@ export default class Game extends Phaser.Scene {
 
     this.shuttleCallback = () => {
       // Add shuttle spritesheet
-      shuttle = this.physics.add.sprite(1100, 800, "shuttle");
-      shuttle.setScale(0.3);
+      shuttle = this.physics.add.sprite(340, 800, "shuttle");
+      shuttle.setScale(0.2);
       shuttle.setGravityY(-300); // Set gravity of the shuttle
       // create animation of the shuttle spritesheet
       this.anims.create({
@@ -85,9 +85,9 @@ export default class Game extends Phaser.Scene {
 
           // Stop the timer and display "Game Over"
           timer.remove();
-          gameOverText = this.add.text(620, 200, "Game Over", {
+          gameOverText = this.add.text(200, 200, "Game Over", {
             fontFamily: "Gluten",
-            fontSize: "80px",
+            fontSize: "60px",
             color: "#ff0000",
             shadow: {
               offsetX: 4,
@@ -100,7 +100,7 @@ export default class Game extends Phaser.Scene {
           gameOverText.setOrigin(0.5);
 
           // Create a restart button
-          const restartButton = this.add.text(620, 500, "Restart", {
+          const restartButton = this.add.text(200, 500, "Restart", {
             fontFamily: "Gluten",
             fontSize: "36px",
             color: "white",

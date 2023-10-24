@@ -5,13 +5,13 @@ import Game from "./scenes/game.js";
 const config = {
   type: Phaser.AUTO,
   scale: {
-    mode: Phaser.Scale.RESIZE,
+    mode: Phaser.Scale.FIT,
     parent: "game-container",
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    // width: 1200,
-    // height: 800,
-    // width: window.innerWidth, // for mobile
-    // height: window.innerHeight, // for mobile
+    width: 400,
+    height: 800,
+    // width: window.innerWidth*window.devicePixelRatio,
+    // height: window.innerHeight*window.devicePixelRatio, 
   },
   scene: [MainScreen, Game],
   physics: {
