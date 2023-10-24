@@ -9,7 +9,7 @@ export default class Game extends Phaser.Scene {
   preload() {
     this.load.image("background", "src/assets/background.png");
     this.load.image("player", "src/assets/player.png");
-    this.load.image("player-hit", "src/assets/player-hit.png");
+    this.load.image("playerHit", "src/assets/player-hit.png");
     this.load.spritesheet("shuttle", "src/assets/shuttle.PNG", {
       frameWidth: 269, // Width of each frame
       frameHeight: 648, // Height of each frame
@@ -22,31 +22,22 @@ export default class Game extends Phaser.Scene {
     bg.setAlpha(0.8); // Changed opacity
 
     //Add player image as "physics.add.sprite" to make the gravity/bounds work
-    const player = this.physics.add.sprite(200, 450, "player");
-    player.setScale(0.05); // Reduced the size of the player image
+    // const player = this.physics.add.sprite(200, 450, "player");
+    let player = this.createPlayer(200, 450);
+    let playerHit = null;
+
     this.physics.world.setBounds(0, 0, 400, 800); // Set world bounds
     player.setCollideWorldBounds(true); // Enable collisions between the player and the world bounds
     player.setInteractive(); // Enable input for the player sprite
 
     // Set up event listeners for mouse input
-    let initialTouchX;
-    let initialTouchY;
-    const sensitivity = 0.1;
-
-    this.input.on("pointerdown", function (pointer) {
-      initialTouchX = pointer.x;
-      initialTouchY = pointer.y;
-    });
+    // Set the offset to avoid the player being covered by touch/cursor
+    const offset = { x: 0, y: -50 }; // Adjust the offset values as needed
 
     this.input.on("pointermove", (pointer) => {
-      if (initialTouchX !== undefined && initialTouchY !== undefined) {
-        // Calculate the offset
-        const offsetX = (pointer.x - initialTouchX) * sensitivity;
-        const offsetY = (pointer.y - initialTouchY) * sensitivity;
-        // Update the player's position
-        player.x += offsetX;
-        player.y += offsetY;
-      }
+      // Set the player's position to the cursor's position with an offset
+      player.x = pointer.x + offset.x;
+      player.y = pointer.y + offset.y;
     });
 
     //Text element to display the timer
@@ -94,9 +85,14 @@ export default class Game extends Phaser.Scene {
       shuttle.play("fly"); // play the animation
 
       this.physics.add.overlap(player, shuttle, () => {
-        console.log(shuttle);
-        console.log("Overlap detected!");
         if (!isGameOver) {
+          // Remove the original player image
+          player.destroy();
+
+          // Create a new image using player.hit asset at the same position
+          playerHit = this.add.sprite(player.x, player.y, "playerHit");
+          playerHit.setScale(0.05);
+
           // Set the game over flag
           isGameOver = true;
 
@@ -148,100 +144,35 @@ export default class Game extends Phaser.Scene {
             elapsedTime = 0;
             timerText.setText(`Score: ${elapsedTime}`);
             gameOverText.setVisible(false);
+            restartButton.setVisible(false);
 
             // Remove the shuttle sprite
             shuttle.destroy();
 
-            // Restart the game
+            // Destroy the player hit image
+            playerHit.destroy();
+
+            // Recreate the player
+            player = this.createPlayer(200, 450);
+
             this.scene.restart();
           });
         }
       });
     };
 
-    // Function to create the shuttle
-
-    // Handle collisions
-
-    // this.shuttleCallback = () => {
-    //   // Add shuttle spritesheet
-    //   shuttle = this.physics.add.sprite(1100, 800, "shuttle");
-    //   shuttle.setScale(0.3);
-    //   shuttle.setGravityY(-300); // Set gravity of the shuttle
-    //   // create animation of the shuttle spritesheet
-    //   this.anims.create({
-    //     key: "fly",
-    //     frames: this.anims.generateFrameNumbers("shuttle", {
-    //       start: 0,
-    //       end: 5,
-    //     }),
-    //     frameRate: 10,
-    //     repeat: -1,
-    //   });
-    //   shuttle.play("fly"); // play the animation
-    // };
-
-    // // Handle collisions
-    // this.physics.add.overlap(player, shuttle, () => {
-    //   console.log("Overlap detected!");
-    //   if (!isGameOver) {
-    //     // Set the game over flag
-    //     isGameOver = true;
-
-    //     // Stop the timer and display "Game Over"
-    //     timer.remove();
-    //     gameOverText = this.add.text(400, 300, "Game Over", {
-    //       fontFamily: "Gluten",
-    //       fontSize: "48px",
-    //       color: "#ff0000",
-    //     });
-    //     gameOverText.setOrigin(0.5);
-
-    //     // Create a restart button
-    //     const restartButton = this.add.text(620, 300, "Restart", {
-    //       fontFamily: "Gluten",
-    //       fontSize: "36px",
-    //       color: "#00ff00",
-    //     });
-    //     restartButton.setOrigin(0.5);
-    //     restartButton.setInteractive();
-
-    //     restartButton.on("pointerdown", () => {
-    //       // Reset the game state
-    //       isGameOver = false;
-    //       elapsedTime = 0;
-    //       timerText.setText(`Score: ${elapsedTime}`);
-    //       gameOverText.setVisible(false);
-
-    //       // Remove the shuttle sprite
-    //       shuttle.destroy();
-
-    //       // Restart the game
-    //       this.scene.restart();
-    //     });
-    //   }
-    // });
-
     this.GameScreenHandler = new GameScreenHandler(this);
     this.GameScreenHandler.buildUI();
   }
 
-  update() {
-    // update the player's position based on the offset between the initial touch and the current touch
-    this.input.on("pointermove", function (pointer) {
-      if (initialTouchX !== undefined && initialTouchY !== undefined) {
-        // Calculate the offset
-        const offsetX = pointer.x - initialTouchX;
-        const offsetY = pointer.y - initialTouchY;
-
-        // Update the player's position
-        player.x += offsetX;
-        player.y += offsetY;
-
-        // Update the initial touch position for the next frame
-        initialTouchX = pointer.x;
-        initialTouchY = pointer.y;
-      }
-    });
+  update() {}
+  // Create a player sprite
+  createPlayer(x, y) {
+    const player = this.physics.add.sprite(x, y, "player");
+    player.setScale(0.05);
+    this.physics.world.setBounds(0, 0, 400, 800);
+    player.setCollideWorldBounds(true);
+    player.setInteractive();
+    return player;
   }
 }
