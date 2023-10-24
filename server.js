@@ -1,6 +1,6 @@
 const server = require("express")();
 const http = require("http").createServer(server);
-const io = require("socket.io")(http);
+// const io = require("socket.io")(http);
 const tgBot = require("node-telegram-bot-api");
 require("dotenv").config();
 
