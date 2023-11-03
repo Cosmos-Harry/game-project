@@ -32,7 +32,7 @@ export default class Game extends Phaser.Scene {
 
     // Set up event listeners for mouse input
     // Set the offset to avoid the player being covered by touch/cursor
-    const offset = { x: 0, y: -50 }; // Adjust the offset values as needed
+    const offset = { x: 0, y: -80 }; // Adjust the offset values as needed
 
     this.input.on("pointermove", (pointer) => {
       // Set the player's position to the cursor's position with an offset
@@ -48,6 +48,9 @@ export default class Game extends Phaser.Scene {
     });
 
     let elapsedTime = 0; // Initialize the elapsed time
+    let shuttleTimer = 0;
+    const shuttleInterval = 2;
+    let numberOfShuttles = 1;
     let shuttle;
     let isGameOver = false;
     let gameOverText;
@@ -61,104 +64,117 @@ export default class Game extends Phaser.Scene {
         elapsedTime++;
         timerText.setText(`Score: ${elapsedTime}`);
 
-        if (elapsedTime === 2) {
+        // if (elapsedTime === 2) {
+        //   this.shuttleCallback();
+        // }
+        shuttleTimer++;
+        if (shuttleTimer >= shuttleInterval) {
           this.shuttleCallback();
+          shuttleTimer = 0;
+        }
+
+        if (elapsedTime === 20) {
+          numberOfShuttles = 2;
         }
       },
     });
 
     this.shuttleCallback = () => {
-      // Add shuttle spritesheet
-      shuttle = this.physics.add.sprite(340, 800, "shuttle");
-      shuttle.setScale(0.2);
-      shuttle.setGravityY(-300); // Set gravity of the shuttle
-      // create animation of the shuttle spritesheet
-      this.anims.create({
-        key: "fly",
-        frames: this.anims.generateFrameNumbers("shuttle", {
-          start: 0,
-          end: 5,
-        }),
-        frameRate: 10,
-        repeat: -1,
-      });
-      shuttle.play("fly"); // play the animation
+      for (let i = 0; i < numberOfShuttles; i++) {
+        // Add shuttle spritesheet
+        // Randomly select the X position within the game world bounds
+        const randomX = Phaser.Math.Between(0, this.physics.world.bounds.width);
+        shuttle = this.physics.add.sprite(randomX, 800, "shuttle");
+        shuttle.setScale(0.2);
+        shuttle.setGravityY(-300); // Set gravity of the shuttle
+        // create animation of the shuttle spritesheet
+        this.anims.create({
+          key: "fly",
+          frames: this.anims.generateFrameNumbers("shuttle", {
+            start: 0,
+            end: 5,
+          }),
+          frameRate: 10,
+          repeat: -1,
+        });
+        shuttle.play("fly"); // play the animation
 
-      this.physics.add.overlap(player, shuttle, () => {
-        if (!isGameOver) {
-          // Remove the original player image
-          player.destroy();
+        this.physics.add.overlap(player, shuttle, () => {
+          if (!isGameOver) {
+            // Remove the original player image
+            player.destroy();
 
-          // Create a new image using player.hit asset at the same position
-          playerHit = this.add.sprite(player.x, player.y, "playerHit");
-          playerHit.setScale(0.05);
+            // Create a new image using player.hit asset at the same position
+            playerHit = this.add.sprite(player.x, player.y, "playerHit");
+            playerHit.setScale(0.05);
 
-          // Set the game over flag
-          isGameOver = true;
+            // Set the game over flag
+            isGameOver = true;
 
-          // Stop the timer and display "Game Over"
-          timer.remove();
-          gameOverText = this.add.text(200, 200, "Game Over", {
-            fontFamily: "Gluten",
-            fontSize: "60px",
-            color: "#ff0000",
-            shadow: {
-              offsetX: 4,
-              offsetY: 4,
-              blur: 10,
-              stroke: false,
-              fill: true,
-            },
-          });
-          gameOverText.setOrigin(0.5);
+            // Stop the timer and display "Game Over"
+            timer.remove();
+            gameOverText = this.add.text(200, 200, "Game Over", {
+              fontFamily: "Gluten",
+              fontSize: "60px",
+              color: "#ff0000",
+              shadow: {
+                offsetX: 4,
+                offsetY: 4,
+                blur: 10,
+                stroke: false,
+                fill: true,
+              },
+            });
+            gameOverText.setOrigin(0.5);
 
-          // Create a restart button
-          const restartButton = this.add.text(200, 500, "Restart", {
-            fontFamily: "Gluten",
-            fontSize: "36px",
-            color: "white",
-            shadow: {
-              offsetX: 4,
-              offsetY: 4,
-              blur: 4,
-              stroke: false,
-              fill: true,
-            },
-          });
+            // Create a restart button
+            const restartButton = this.add.text(200, 500, "Restart", {
+              fontFamily: "Gluten",
+              fontSize: "36px",
+              color: "white",
+              shadow: {
+                offsetX: 4,
+                offsetY: 4,
+                blur: 4,
+                stroke: false,
+                fill: true,
+              },
+            });
 
-          restartButton.setOrigin(0.5);
-          restartButton.setInteractive();
+            restartButton.setOrigin(0.5);
+            restartButton.setInteractive();
 
-          // Add pointerover and pointerout event listeners
-          restartButton.on("pointerover", () => {
-            restartButton.setShadow(6, 6, "rgba(0, 0, 0, 0.5)", false, true);
-          });
+            // Add pointerover and pointerout event listeners
+            restartButton.on("pointerover", () => {
+              restartButton.setShadow(6, 6, "rgba(0, 0, 0, 0.5)", false, true);
+            });
 
-          restartButton.on("pointerout", () => {
-            restartButton.setShadow(4, 4, "rgba(0, 0, 0, 0.5)", false, true);
-          });
+            restartButton.on("pointerout", () => {
+              restartButton.setShadow(4, 4, "rgba(0, 0, 0, 0.5)", false, true);
+            });
 
-          restartButton.on("pointerdown", () => {
-            // Reset the game state
-            isGameOver = false;
-            elapsedTime = 0;
-            timerText.setText(`Score: ${elapsedTime}`);
-            gameOverText.setVisible(false);
-            restartButton.setVisible(false);
+            restartButton.on("pointerdown", () => {
+              // Reset the game state
+              isGameOver = false;
+              elapsedTime = 0;
+              timerText.setText(`Score: ${elapsedTime}`);
+              gameOverText.setVisible(false);
+              restartButton.setVisible(false);
 
-            // Remove the shuttle sprite
-            shuttle.destroy();
+              // Remove the shuttle sprite
+              shuttle.destroy();
 
-            // Destroy the player hit image
-            playerHit.destroy();
+              // Destroy the player hit image
+              playerHit.destroy();
 
-            // Recreate the player
-            player = this.createPlayer(200, 450);
+              // Recreate the player
+              player = this.createPlayer(200, 450);
 
-            this.scene.restart();
-          });
-        }
-      });
+              this.scene.restart();
+            });
+          }
+        });
+      }
     };
 
     this.GameScreenHandler = new GameScreenHandler(this);
