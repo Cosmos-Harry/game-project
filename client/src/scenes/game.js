@@ -5,12 +5,18 @@ export default class Game extends Phaser.Scene {
     super({
       key: "Game",
     });
+
+    this.bird = null;
   }
   preload() {
     this.load.image("background", "src/assets/background.png");
     this.load.image("player", "src/assets/player.png");
     this.load.image("playerHit", "src/assets/player-hit.png");
     this.load.image("cloud", "src/assets/clouds.png");
+    this.load.spritesheet("bird", "src/assets/bird.png", {
+      frameWidth: 240,
+      frameHeight: 314,
+    });
     this.load.spritesheet("shuttle", "src/assets/shuttle.PNG", {
       frameWidth: 269, // Width of each frame
       frameHeight: 648, // Height of each frame
@@ -23,6 +29,7 @@ export default class Game extends Phaser.Scene {
     let gameOverText;
     let elapsedTime = 0; // Initialize the elapsed time
     let playerHit = null;
+    let shuttle;
 
     this.bgCallback = () => {
       new Obstacle(this).createSprite(
@@ -65,11 +72,36 @@ export default class Game extends Phaser.Scene {
         10
       );
     };
+    this.bird = this.birdCallback = () => {
+      const randomY = Phaser.Math.Between(0, this.physics.world.bounds.width);
+      this.bird = new Obstacle(this).createSprite(
+        "bird",
+        500,
+        randomY,
+        0.4,
+        null,
+        null,
+        1,
+        2
+      );
+
+      if (!this.anims.exists("bird")) {
+        new Obstacle(this).createAnimation("bird", "bird", 0, 19, 20, -1);
+      }
+      this.bird.play("bird");
+
+      this.physics.add.overlap(player, this.bird, () => {
+        gameOverHandler();
+
+        this.bird.destroy();
+        console.log("destroyed");
+      });
+    };
     this.shuttleCallback = () => {
       for (let i = 0; i < numberOfShuttles; i++) {
         // Randomly select the X position within the game world bounds
         const randomX = Phaser.Math.Between(0, this.physics.world.bounds.width);
-        const shuttle = new Obstacle(this).createSprite(
+        shuttle = new Obstacle(this).createSprite(
           "shuttle",
           randomX,
           800,
@@ -80,87 +112,100 @@ export default class Game extends Phaser.Scene {
           2
         );
 
-        new Obstacle(this).createAnimation("fly", "shuttle", 0, 5, 10, -1);
-        shuttle.play("fly");
+        if (!this.anims.exists("shuttle")) {
+          new Obstacle(this).createAnimation("shuttle", "shuttle", 0, 5, 10, -1);
+        }
+        shuttle.play("shuttle");
 
         this.physics.add.overlap(player, shuttle, () => {
-          if (!isGameOver) {
-            // Remove the original player image
-            player.destroy();
+          gameOverHandler();
 
-            // Create a new image using player.hit asset at the same position
-            playerHit = this.add.sprite(player.x, player.y, "playerHit");
-            playerHit.setScale(0.05);
-
-            // Set the game over flag
-            isGameOver = true;
-
-            // Stop the timer and display "Game Over"
-            timer.remove();
-            gameOverText = this.add.text(200, 200, "Game Over", {
-              fontFamily: "Gluten",
-              fontSize: "60px",
-              color: "#ff0000",
-              shadow: {
-                offsetX: 4,
-                offsetY: 4,
-                blur: 10,
-                stroke: false,
-                fill: true,
-              },
-            });
-            gameOverText.setOrigin(0.5);
-
-            // Create a restart button
-            const restartButton = this.add.text(200, 500, "Restart", {
-              fontFamily: "Gluten",
-              fontSize: "36px",
-              color: "white",
-              shadow: {
-                offsetX: 4,
-                offsetY: 4,
-                blur: 4,
-                stroke: false,
-                fill: true,
-              },
-            });
-
-            restartButton.setOrigin(0.5);
-            restartButton.setInteractive();
-
-            // Add pointerover and pointerout event listeners
-            restartButton.on("pointerover", () => {
-              restartButton.setShadow(6, 6, "rgba(0, 0, 0, 0.5)", false, true);
-            });
-
-            restartButton.on("pointerout", () => {
-              restartButton.setShadow(4, 4, "rgba(0, 0, 0, 0.5)", false, true);
-            });
-
-            restartButton.on("pointerdown", () => {
-              // Reset the game state
-              isGameOver = false;
-              elapsedTime = 0;
-              timerText.setText(`Score: ${elapsedTime}`);
-              gameOverText.setVisible(false);
-              restartButton.setVisible(false);
-
-              // Remove the shuttle sprite
-              shuttle.destroy();
-
-              // Destroy the player hit image
-              playerHit.destroy();
-
-              // Recreate the player
-              player = this.playerCallback();
-
-              this.scene.restart();
-            });
-          }
+          shuttle.destroy();
+          console.log("destroyed");
         });
+        // if (this.anims.exists("fly")) {
+        //   this.anims.get("fly").destroy();
+        // console.log("destroyed fly");
+        // }
       }
     };
 
+    const gameOverHandler = () => {
+      if (!isGameOver) {
+        // Remove the original player image
+        player.destroy();
+
+        // Create a new image using player.hit asset at the same position
+        playerHit = this.add.sprite(player.x, player.y, "playerHit");
+        playerHit.setScale(0.05);
+
+        // Set the game over flag
+        isGameOver = true;
+
+        // Stop the timer and display "Game Over"
+        timer.remove();
+        gameOverText = this.add.text(200, 200, "Game Over", {
+          fontFamily: "Gluten",
+          fontSize: "60px",
+          color: "#ff0000",
+          shadow: {
+            offsetX: 4,
+            offsetY: 4,
+            blur: 10,
+            stroke: false,
+            fill: true,
+          },
+        });
+        gameOverText.setOrigin(0.5);
+
+        // Create a restart button
+        const restartButton = this.add.text(200, 500, "Restart", {
+          fontFamily: "Gluten",
+          fontSize: "36px",
+          color: "white",
+          shadow: {
+            offsetX: 4,
+            offsetY: 4,
+            blur: 4,
+            stroke: false,
+            fill: true,
+          },
+        });
+
+        restartButton.setOrigin(0.5);
+        restartButton.setInteractive();
+
+        // Add pointerover and pointerout event listeners
+        restartButton.on("pointerover", () => {
+          restartButton.setShadow(6, 6, "rgba(0, 0, 0, 0.5)", false, true);
+        });
+
+        restartButton.on("pointerout", () => {
+          restartButton.setShadow(4, 4, "rgba(0, 0, 0, 0.5)", false, true);
+        });
+
+        restartButton.on("pointerdown", () => {
+          // Reset the game state
+
+          isGameOver = false;
+          elapsedTime = 0;
+          timerText.setText(`Score: ${elapsedTime}`);
+          gameOverText.setVisible(false);
+          restartButton.setVisible(false);
+
+          // Remove the shuttle sprite
+          // shuttle.destroy();
+
+          // Destroy the player hit image
+          playerHit.destroy();
+
+          // Recreate the player
+          player = this.playerCallback();
+
+          this.scene.restart();
+        });
+      }
+    };
     //Text element to display the timer
     const timerText = this.add.text(110, 20, "Score: 0", {
       fontFamily: "Gluten",
@@ -185,11 +230,20 @@ export default class Game extends Phaser.Scene {
           this.shuttleCallback();
         }
 
+        if (elapsedTime % 4 === 0) {
+          this.birdCallback();
+        }
+
         if (elapsedTime === 20) {
           numberOfShuttles = 2;
         }
       },
     });
+    // if (elapsedTime % 4 === 0 && elapsedTime !== 0) {
+
+    //   console.log(elapsedTime);
+    //   this.birdCallback();
+    // }
 
     //Add player image as "physics.add.sprite" to make the gravity/bounds work
     // const player = this.physics.add.sprite(200, 450, "player");
@@ -208,11 +262,16 @@ export default class Game extends Phaser.Scene {
       player.y = pointer.y + offset.y;
     });
 
-    this.GameScreenHandler = new GameScreenHandler(this);
-    this.GameScreenHandler.buildUI();
+    // this.GameScreenHandler = new GameScreenHandler(this);
+    // this.GameScreenHandler.buildUI();
   }
 
-  update() {}
+  update() {
+    this.bird.x -= 4;
+    // if (this.bird.x < 0) {
+    //   this.bird.x = 450; // Reset to the right side of the screen
+    // }
+  }
 }
 class Obstacle {
   constructor(scene) {
@@ -239,5 +298,10 @@ class Obstacle {
       frameRate: frameRate,
       repeat: repeat,
     });
+
+    // if (this.scene.anims.exists(givenKey)) {
+    //   this.scene.anims.get(givenKey).destroy();
+    // console.log("destroyed fly");
+    // }
   }
 }

@@ -8,9 +8,15 @@ export default class MainScreen extends Phaser.Scene {
   }
   preload() {
     this.load.image("background", "src/assets/background.png");
+    this.load.audio("main-menu", "src/assets/main-menu.mp3");
   }
 
   create() {
+    // let music;
+
+    // music = this.sound.add("menu-theme");
+    // music.play();
+
     this.add.image(200, 400, "background");
 
     const play = this.add.text(135, 420, "PLAY", {
@@ -31,6 +37,7 @@ export default class MainScreen extends Phaser.Scene {
 
     play.on("pointerdown", () => {
       this.scene.start("Game");
+      this.sound.play("main-menu", { loop: true });
     });
 
     play.on("pointerover", () => {
@@ -89,8 +96,8 @@ export default class MainScreen extends Phaser.Scene {
       source.setShadow(4, 4, "rgba(0,0,0,3.5)", 4, false, true);
     });
 
-    this.MainScreenHandler = new MainScreenHandler(this);
-    this.MainScreenHandler.buildUI();
+    // this.MainScreenHandler = new MainScreenHandler(this);
+    // this.MainScreenHandler.buildUI();
   }
 
   update() {}

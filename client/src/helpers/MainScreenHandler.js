@@ -82,8 +82,8 @@ export default class MainScreenHandler {
     //   });
     // };
 
-    this.buildUI = () => {
-      this.buildMainScreenText();
-    };
+    // this.buildUI = () => {
+    //   this.buildMainScreenText();
+    // };
   }
 }
