@@ -5,14 +5,20 @@ export default class Game extends Phaser.Scene {
     super({
       key: "Game",
     });
-
-    this.bird = null;
   }
   preload() {
     this.load.image("background", "src/assets/background.png");
     this.load.image("player", "src/assets/player.png");
     this.load.image("playerHit", "src/assets/player-hit.png");
     this.load.image("cloud", "src/assets/clouds.png");
+    this.load.spritesheet("asteroid", "src/assets/asteroid.png", {
+      frameWidth: 232,
+      frameHeight: 125,
+    });
+    this.load.spritesheet("jet", "src/assets/jet.png", {
+      frameWidth: 153,
+      frameHeight: 98,
+    });
     this.load.spritesheet("bird", "src/assets/bird.png", {
       frameWidth: 240,
       frameHeight: 314,
@@ -49,52 +55,110 @@ export default class Game extends Phaser.Scene {
         200,
         450,
         0.05,
-        0,
-        0,
+        null,
+        null,
         1,
         1
       );
       this.physics.world.setBounds(0, 0, 400, 800);
+      player.setSize(30, 30, true);
       player.setCollideWorldBounds(true);
       player.setInteractive();
       return player;
     };
     this.cloudCallback = () => {
-      const randomY = Phaser.Math.Between(0, this.physics.world.bounds.width);
+      const randomY = Phaser.Math.Between(0, this.physics.world.bounds.height);
       new Obstacle(this).createSprite(
         "cloud",
         1400,
         randomY,
         0.4,
         -100,
-        0,
+        null,
         1,
         10
       );
     };
-    this.bird = this.birdCallback = () => {
-      const randomY = Phaser.Math.Between(0, this.physics.world.bounds.width);
-      this.bird = new Obstacle(this).createSprite(
+    this.birdCallback = () => {
+      const randomY = Phaser.Math.Between(0, this.physics.world.bounds.height);
+      const bird = new Obstacle(this).createSprite(
         "bird",
         500,
         randomY,
         0.4,
-        null,
+        -60,
         null,
         1,
-        2
+        1
       );
 
       if (!this.anims.exists("bird")) {
         new Obstacle(this).createAnimation("bird", "bird", 0, 19, 20, -1);
       }
-      this.bird.play("bird");
+      bird.play("bird");
 
-      this.physics.add.overlap(player, this.bird, () => {
+      this.physics.add.overlap(player, bird, () => {
         gameOverHandler();
 
-        this.bird.destroy();
-        console.log("destroyed");
+        bird.destroy();
+      });
+    };
+
+    this.jetCallback = () => {
+      const randomY = Phaser.Math.Between(0, this.physics.world.bounds.height);
+      const jet = new Obstacle(this).createSprite(
+        "jet",
+        0,
+        randomY,
+        0.7,
+        500,
+        null,
+        1,
+        1
+      );
+
+      jet.setFlip(true, false);
+
+      if (!this.anims.exists("jet")) {
+        new Obstacle(this).createAnimation("jet", "jet", 15, 18, 4, 0);
+      }
+      jet.play("jet");
+
+      this.physics.add.overlap(player, jet, () => {
+        gameOverHandler();
+
+        jet.destroy();
+      });
+    };
+
+    this.asteroidCallback = () => {
+      const randomX = Phaser.Math.Between(0, this.physics.world.bounds.width);
+      const asteroid = new Obstacle(this).createSprite(
+        "asteroid",
+        randomX,
+        800,
+        0.4,
+        0,
+        -10,
+        1,
+        1
+      );
+
+      if (!this.anims.exists("asteroid")) {
+        new Obstacle(this).createAnimation(
+          "asteroid",
+          "asteroid",
+          0,
+          4,
+          10,
+          -1
+        );
+      }
+      asteroid.play("asteroid");
+
+      this.physics.add.overlap(player, asteroid, () => {
+        gameOverHandler();
+        asteroid.destroy();
       });
     };
     this.shuttleCallback = () => {
@@ -112,8 +176,17 @@ export default class Game extends Phaser.Scene {
           2
         );
 
+        // shuttle.setSize(50, 50, true);
+
         if (!this.anims.exists("shuttle")) {
-          new Obstacle(this).createAnimation("shuttle", "shuttle", 0, 5, 10, -1);
+          new Obstacle(this).createAnimation(
+            "shuttle",
+            "shuttle",
+            0,
+            5,
+            10,
+            -1
+          );
         }
         shuttle.play("shuttle");
 
@@ -123,10 +196,6 @@ export default class Game extends Phaser.Scene {
           shuttle.destroy();
           console.log("destroyed");
         });
-        // if (this.anims.exists("fly")) {
-        //   this.anims.get("fly").destroy();
-        // console.log("destroyed fly");
-        // }
       }
     };
 
@@ -223,19 +292,29 @@ export default class Game extends Phaser.Scene {
         elapsedTime++;
         timerText.setText(`Score: ${elapsedTime}`);
 
-        if (elapsedTime % 10 === 0) {
+        if (elapsedTime >= 15 && elapsedTime % 10 === 0) {
           this.cloudCallback();
         }
         if (elapsedTime % 2 === 0) {
           this.shuttleCallback();
         }
 
-        if (elapsedTime % 4 === 0) {
+        if (elapsedTime % 5 === 0) {
           this.birdCallback();
         }
 
-        if (elapsedTime === 20) {
+        if (elapsedTime >= 70 && elapsedTime<100) {
           numberOfShuttles = 2;
+        }
+        if (elapsedTime >= 100) {
+          numberOfShuttles = 3;
+        }
+
+        if (elapsedTime >= 17 && elapsedTime % 12 === 0) {
+          this.asteroidCallback();
+        }
+        if (elapsedTime >= 50 && elapsedTime % 3 === 0) {
+          this.jetCallback();
         }
       },
     });
@@ -266,12 +345,7 @@ export default class Game extends Phaser.Scene {
     // this.GameScreenHandler.buildUI();
   }
 
-  update() {
-    this.bird.x -= 4;
-    // if (this.bird.x < 0) {
-    //   this.bird.x = 450; // Reset to the right side of the screen
-    // }
-  }
+  update() {}
 }
 class Obstacle {
   constructor(scene) {
