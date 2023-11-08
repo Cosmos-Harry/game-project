@@ -70,7 +70,7 @@ export default class Game extends Phaser.Scene {
       const randomY = Phaser.Math.Between(0, this.physics.world.bounds.height);
       const cloud = new Obstacle(this).createSprite(
         "cloud",
-        1000,
+        900,
         randomY,
         0.4,
         -100,
@@ -78,7 +78,7 @@ export default class Game extends Phaser.Scene {
         1,
         10
       );
-      cloud.setScale(0.2,0.3);
+      cloud.setScale(1.5);
     };
     this.birdCallback = () => {
       const randomY = Phaser.Math.Between(0, this.physics.world.bounds.height);

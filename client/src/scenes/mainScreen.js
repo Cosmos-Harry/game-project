@@ -1,4 +1,5 @@
 import MainScreenHandler from "../helpers/MainScreenHandler";
+import WebFontFile from "./webFontFile"
 
 export default class MainScreen extends Phaser.Scene {
   constructor() {
@@ -7,6 +8,7 @@ export default class MainScreen extends Phaser.Scene {
     });
   }
   preload() {
+    this.load.addFile(new WebFontFile(this.load, 'Gluten'))
     this.load.image("background", "src/assets/background.png");
     this.load.audio("main-menu", "src/assets/main-menu.mp3");
   }
@@ -22,6 +24,8 @@ export default class MainScreen extends Phaser.Scene {
     const play = this.add.text(135, 420, "PLAY", {
       fontFamily: "Gluten",
       fontSize: "50px",
+      // stroke: "#ad4d42",
+      // strokeThickness: "3",
       shadow: {
         offsetX: 4,
         offsetY: 4,
@@ -73,8 +77,8 @@ export default class MainScreen extends Phaser.Scene {
     const source = this.add.text(320, 20, "SOURCE", {
       fontFamily: "Gluten",
       fontSize: "14px",
-      stroke: "#ad4d42",
-      strokeThickness: "2",
+      // stroke: "#ad4d42",
+      // strokeThickness: "2",
       shadow: {
         offsetX: 4,
         offsetY: 4,
