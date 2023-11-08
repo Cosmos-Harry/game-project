@@ -15,7 +15,6 @@ export default class MainScreen extends Phaser.Scene {
 
   create() {
    
-
     this.add.image(200, 400, "background");
 
     const play = this.add.text(135, 420, "PLAY", {
