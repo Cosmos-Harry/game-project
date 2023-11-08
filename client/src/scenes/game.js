@@ -13,7 +13,7 @@ export default class Game extends Phaser.Scene {
     this.load.image("cloud", "src/assets/clouds.png");
     this.load.spritesheet("asteroid", "src/assets/asteroid.png", {
       frameWidth: 232,
-      frameHeight: 125,
+      frameHeight: 136,
     });
     this.load.spritesheet("jet", "src/assets/jet.png", {
       frameWidth: 153,
@@ -68,9 +68,9 @@ export default class Game extends Phaser.Scene {
     };
     this.cloudCallback = () => {
       const randomY = Phaser.Math.Between(0, this.physics.world.bounds.height);
-      new Obstacle(this).createSprite(
+      const cloud = new Obstacle(this).createSprite(
         "cloud",
-        1400,
+        1000,
         randomY,
         0.4,
         -100,
@@ -78,6 +78,7 @@ export default class Game extends Phaser.Scene {
         1,
         10
       );
+      cloud.setScale(0.2,0.3);
     };
     this.birdCallback = () => {
       const randomY = Phaser.Math.Between(0, this.physics.world.bounds.height);
@@ -144,15 +145,10 @@ export default class Game extends Phaser.Scene {
         1
       );
 
+      asteroid.setAngle(90);
+
       if (!this.anims.exists("asteroid")) {
-        new Obstacle(this).createAnimation(
-          "asteroid",
-          "asteroid",
-          0,
-          4,
-          10,
-          -1
-        );
+        new Obstacle(this).createAnimation("asteroid", "asteroid", 0, 4, 2, -1);
       }
       asteroid.play("asteroid");
 
@@ -194,7 +190,6 @@ export default class Game extends Phaser.Scene {
           gameOverHandler();
 
           shuttle.destroy();
-          console.log("destroyed");
         });
       }
     };
@@ -292,7 +287,7 @@ export default class Game extends Phaser.Scene {
         elapsedTime++;
         timerText.setText(`Score: ${elapsedTime}`);
 
-        if (elapsedTime >= 15 && elapsedTime % 10 === 0) {
+        if (elapsedTime >= 1 && elapsedTime % 5 === 0) {
           this.cloudCallback();
         }
         if (elapsedTime % 2 === 0) {
@@ -303,14 +298,14 @@ export default class Game extends Phaser.Scene {
           this.birdCallback();
         }
 
-        if (elapsedTime >= 70 && elapsedTime<100) {
+        if (elapsedTime >= 70 && elapsedTime < 100) {
           numberOfShuttles = 2;
         }
         if (elapsedTime >= 100) {
           numberOfShuttles = 3;
         }
 
-        if (elapsedTime >= 17 && elapsedTime % 12 === 0) {
+        if (elapsedTime >= 14 && elapsedTime % 7 === 0) {
           this.asteroidCallback();
         }
         if (elapsedTime >= 50 && elapsedTime % 3 === 0) {

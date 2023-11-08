@@ -22,8 +22,6 @@ export default class MainScreen extends Phaser.Scene {
     const play = this.add.text(135, 420, "PLAY", {
       fontFamily: "Gluten",
       fontSize: "50px",
-      stroke: "#ad4d42",
-      strokeThickness: "5",
       shadow: {
         offsetX: 4,
         offsetY: 4,
@@ -41,14 +39,14 @@ export default class MainScreen extends Phaser.Scene {
     });
 
     play.on("pointerover", () => {
-      play.setShadow(6, 6, "rgba(0,0,0,3.5)", 14, false, true);
+      play.setShadow(6, 6, "rgba(0,0,0,3.5)", 10, false, true);
     });
 
     play.on("pointerout", () => {
       play.setShadow(4, 4, "rgba(0,0,0,3.5)", 10, false, true);
     });
 
-    const settings = this.add.text(165, 520, "SETTINGS", {
+    const settings = this.add.text(165, 500, "SETTINGS", {
       fontFamily: "Gluten",
       fontSize: "15px",
       stroke: "#ad4d42",
