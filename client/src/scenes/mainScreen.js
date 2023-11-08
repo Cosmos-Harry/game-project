@@ -14,10 +14,7 @@ export default class MainScreen extends Phaser.Scene {
   }
 
   create() {
-    // let music;
-
-    // music = this.sound.add("menu-theme");
-    // music.play();
+   
 
     this.add.image(200, 400, "background");
 
