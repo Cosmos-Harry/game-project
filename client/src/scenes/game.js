@@ -31,6 +31,7 @@ export default class Game extends Phaser.Scene {
 
   create() {
     let player;
+    let lastPlayerPosition = { x: 0, y: 0 };
     let numberOfShuttles = 1;
     let isGameOver = false;
     let gameOverText;
@@ -335,7 +336,7 @@ export default class Game extends Phaser.Scene {
 
     this.input.on("pointerup", (pointer) => {
       timer.paused = true;
-
+      lastPlayerPosition = { x: player.x, y: player.y };
       player.destroy();
       pauseText = this.add.text(200, 400, "Pause", {
         fontFamily: "Gluten",
@@ -356,16 +357,28 @@ export default class Game extends Phaser.Scene {
 
     // Add this code inside your create method, after setting up the joystick
     this.input.on("pointerdown", (pointer) => {
+      lastPlayerPosition = { x: pointer.x, y: pointer.y };
+
       if (timer.paused == true) {
         pauseText.setVisible(false);
 
         player = this.playerCallback();
       }
-      // this.input.on("pointermove", (pointer) => {
+
+      this.input.on("pointermove", (pointer) => {
         // Set the player's position to the cursor's position with an offset
-        player.x = pointer.x + offset.x;
-        player.y = pointer.y + offset.y;
-      // });
+        // player.x = pointer.x + offset.x;
+        // player.y = pointer.y + offset.y;
+        const deltaX = pointer.x - lastPlayerPosition.x;
+        const deltaY = pointer.y - lastPlayerPosition.y;
+
+        // Adjust the player's position based on the pointer movement
+        player.x += deltaX;
+        player.y += deltaY;
+
+        // Update the last pointer position
+        lastPlayerPosition = { x: pointer.x, y: pointer.y };
+      });
 
       timer.paused = false;
     });
