@@ -30,6 +30,7 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+    let player;
     let numberOfShuttles = 1;
     let isGameOver = false;
     let gameOverText;
@@ -54,7 +55,7 @@ export default class Game extends Phaser.Scene {
         "player",
         200,
         450,
-        0.05,
+        0.07,
         null,
         null,
         1,
@@ -201,7 +202,7 @@ export default class Game extends Phaser.Scene {
 
         // Create a new image using player.hit asset at the same position
         playerHit = this.add.sprite(player.x, player.y, "playerHit");
-        playerHit.setScale(0.05);
+        playerHit.setScale(0.07);
 
         // Set the game over flag
         isGameOver = true;
@@ -270,6 +271,7 @@ export default class Game extends Phaser.Scene {
         });
       }
     };
+
     //Text element to display the timer
     const timerText = this.add.text(110, 20, "Score: 0", {
       fontFamily: "Gluten",
@@ -322,18 +324,32 @@ export default class Game extends Phaser.Scene {
     //Add player image as "physics.add.sprite" to make the gravity/bounds work
     // const player = this.physics.add.sprite(200, 450, "player");
     this.bgCallback();
-    let player = this.playerCallback();
+    player = this.playerCallback();
 
     this.physics.world.setBounds(0, 0, 400, 800); // Set world bounds
 
     // Set up event listeners for mouse input
     // Set the offset to avoid the player being covered by touch/cursor
-    const offset = { x: 0, y: -80 }; // Adjust the offset values as needed
+    const offset = { x: 0, y: 0 }; // Adjust the offset values as needed
 
-    this.input.on("pointermove", (pointer) => {
-      // Set the player's position to the cursor's position with an offset
+    this.input.on("pointerup", (pointer) => {
+      timer.paused = true;
+
       player.x = pointer.x + offset.x;
       player.y = pointer.y + offset.y;
+
+      player.setVelocity(0);
+    });
+
+    // Add this code inside your create method, after setting up the joystick
+    this.input.on("pointerdown", (pointer) => {
+      this.input.on("pointermove", (pointer) => {
+        // Set the player's position to the cursor's position with an offset
+        player.x = pointer.x + offset.x;
+        player.y = pointer.y + offset.y;
+      });
+
+      timer.paused = false;
     });
 
     // this.GameScreenHandler = new GameScreenHandler(this);
@@ -342,6 +358,7 @@ export default class Game extends Phaser.Scene {
 
   update() {}
 }
+
 class Obstacle {
   constructor(scene) {
     this.scene = scene;
