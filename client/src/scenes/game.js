@@ -34,6 +34,7 @@ export default class Game extends Phaser.Scene {
     let numberOfShuttles = 1;
     let isGameOver = false;
     let gameOverText;
+    let pauseText;
     let elapsedTime = 0; // Initialize the elapsed time
     let playerHit = null;
     let shuttle;
@@ -330,24 +331,41 @@ export default class Game extends Phaser.Scene {
 
     // Set up event listeners for mouse input
     // Set the offset to avoid the player being covered by touch/cursor
-    const offset = { x: 0, y: 0 }; // Adjust the offset values as needed
+    const offset = { x: 0, y: -80 }; // Adjust the offset values as needed
 
     this.input.on("pointerup", (pointer) => {
       timer.paused = true;
 
-      player.x = pointer.x + offset.x;
-      player.y = pointer.y + offset.y;
+      player.destroy();
+      pauseText = this.add.text(200, 400, "Pause", {
+        fontFamily: "Gluten",
+        fontSize: "60px",
+        color: "#ff0000",
+        shadow: {
+          offsetX: 4,
+          offsetY: 4,
+          blur: 10,
+          stroke: false,
+          fill: true,
+        },
+      });
+      pauseText.setOrigin(0.5);
 
-      player.setVelocity(0);
+      // console.log("go pause")
     });
 
     // Add this code inside your create method, after setting up the joystick
     this.input.on("pointerdown", (pointer) => {
-      this.input.on("pointermove", (pointer) => {
+      if (timer.paused == true) {
+        pauseText.setVisible(false);
+
+        player = this.playerCallback();
+      }
+      // this.input.on("pointermove", (pointer) => {
         // Set the player's position to the cursor's position with an offset
         player.x = pointer.x + offset.x;
         player.y = pointer.y + offset.y;
-      });
+      // });
 
       timer.paused = false;
     });
