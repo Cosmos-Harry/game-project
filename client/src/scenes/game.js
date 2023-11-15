@@ -5,6 +5,10 @@ export default class Game extends Phaser.Scene {
     super({
       key: "Game",
     });
+
+    this.timer = null;
+    this.player = null;
+    this.lastPlayerPosition = { x: 0, y: 0 };
   }
   preload() {
     this.load.image("background", "src/assets/background.png");
@@ -30,10 +34,9 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
-    let player;
-    let lastPlayerPosition = { x: 0, y: 0 };
-    let numberOfShuttles = 1;
     let isGameOver = false;
+
+    let numberOfShuttles = 1;
     let gameOverText;
     let pauseText;
     let elapsedTime = 0; // Initialize the elapsed time
@@ -53,7 +56,7 @@ export default class Game extends Phaser.Scene {
       );
     };
     this.playerCallback = () => {
-      const player = new Obstacle(this).createSprite(
+      this.player = new Obstacle(this).createSprite(
         "player",
         200,
         450,
@@ -64,10 +67,10 @@ export default class Game extends Phaser.Scene {
         1
       );
       this.physics.world.setBounds(0, 0, 400, 800);
-      player.setSize(30, 30, true);
-      player.setCollideWorldBounds(true);
-      player.setInteractive();
-      return player;
+      this.player.setSize(30, 30, true);
+      this.player.setCollideWorldBounds(true);
+      this.player.setInteractive();
+      return this.player;
     };
     this.cloudCallback = () => {
       const randomY = Phaser.Math.Between(0, this.physics.world.bounds.height);
@@ -101,7 +104,7 @@ export default class Game extends Phaser.Scene {
       }
       bird.play("bird");
 
-      this.physics.add.overlap(player, bird, () => {
+      this.physics.add.overlap(this.player, bird, () => {
         gameOverHandler();
 
         bird.destroy();
@@ -128,7 +131,7 @@ export default class Game extends Phaser.Scene {
       }
       jet.play("jet");
 
-      this.physics.add.overlap(player, jet, () => {
+      this.physics.add.overlap(this.player, jet, () => {
         gameOverHandler();
 
         jet.destroy();
@@ -155,7 +158,7 @@ export default class Game extends Phaser.Scene {
       }
       asteroid.play("asteroid");
 
-      this.physics.add.overlap(player, asteroid, () => {
+      this.physics.add.overlap(this.player, asteroid, () => {
         gameOverHandler();
         asteroid.destroy();
       });
@@ -189,7 +192,7 @@ export default class Game extends Phaser.Scene {
         }
         shuttle.play("shuttle");
 
-        this.physics.add.overlap(player, shuttle, () => {
+        this.physics.add.overlap(this.player, shuttle, () => {
           gameOverHandler();
 
           shuttle.destroy();
@@ -200,17 +203,17 @@ export default class Game extends Phaser.Scene {
     const gameOverHandler = () => {
       if (!isGameOver) {
         // Remove the original player image
-        player.destroy();
+        this.player.destroy();
 
         // Create a new image using player.hit asset at the same position
-        playerHit = this.add.sprite(player.x, player.y, "playerHit");
+        playerHit = this.add.sprite(this.player.x, this.player.y, "playerHit");
         playerHit.setScale(0.07);
 
         // Set the game over flag
         isGameOver = true;
 
         // Stop the timer and display "Game Over"
-        timer.remove();
+        this.timer.remove();
         gameOverText = this.add.text(200, 200, "Game Over", {
           fontFamily: "Gluten",
           fontSize: "60px",
@@ -260,14 +263,11 @@ export default class Game extends Phaser.Scene {
           gameOverText.setVisible(false);
           restartButton.setVisible(false);
 
-          // Remove the shuttle sprite
-          // shuttle.destroy();
-
           // Destroy the player hit image
           playerHit.destroy();
 
           // Recreate the player
-          player = this.playerCallback();
+          this.player = this.playerCallback();
 
           this.scene.restart();
         });
@@ -283,10 +283,9 @@ export default class Game extends Phaser.Scene {
     timerText.setDepth(1);
 
     // Create a timer
-    const timer = this.time.addEvent({
+    this.timer = this.time.addEvent({
       delay: 1000, // 1 second
       repeat: -1, // 60 times (60 seconds)
-      // callback: yourCallbackFunction, // The function to call each second
       callback: () => {
         elapsedTime++;
         timerText.setText(`Score: ${elapsedTime}`);
@@ -317,70 +316,33 @@ export default class Game extends Phaser.Scene {
         }
       },
     });
-    // if (elapsedTime % 4 === 0 && elapsedTime !== 0) {
 
-    //   console.log(elapsedTime);
-    //   this.birdCallback();
-    // }
-
-    //Add player image as "physics.add.sprite" to make the gravity/bounds work
-    // const player = this.physics.add.sprite(200, 450, "player");
     this.bgCallback();
-    player = this.playerCallback();
-
+    this.player = this.playerCallback();
     this.physics.world.setBounds(0, 0, 400, 800); // Set world bounds
 
-    // Set up event listeners for mouse input
-    // Set the offset to avoid the player being covered by touch/cursor
-    const offset = { x: 0, y: -80 }; // Adjust the offset values as needed
-
+    // const offset = { x: 0, y: 0 }; // Adjust the offset values as needed
     this.input.on("pointerup", (pointer) => {
-      timer.paused = true;
-      lastPlayerPosition = { x: player.x, y: player.y };
-      player.destroy();
-      pauseText = this.add.text(200, 400, "Pause", {
-        fontFamily: "Gluten",
-        fontSize: "60px",
-        color: "#ff0000",
-        shadow: {
-          offsetX: 4,
-          offsetY: 4,
-          blur: 10,
-          stroke: false,
-          fill: true,
-        },
-      });
-      pauseText.setOrigin(0.5);
-
-      // console.log("go pause")
+      if (!isGameOver && elapsedTime >= 1) {
+        this.timer.paused = true;
+        this.lastPlayerPosition = { x: this.player.x, y: this.player.y };
+        this.scene.sendToBack("Game");
+        this.scene.pause("Game");
+        this.scene.launch("Pause");
+      }
     });
 
-    // Add this code inside your create method, after setting up the joystick
-    this.input.on("pointerdown", (pointer) => {
-      lastPlayerPosition = { x: pointer.x, y: pointer.y };
+    this.input.on("pointermove", (pointer) => {
+      if (!this.timer.paused && !isGameOver) {
+        const deltaX = pointer.x - this.lastPlayerPosition.x;
+        const deltaY = pointer.y - this.lastPlayerPosition.y;
 
-      if (timer.paused == true) {
-        pauseText.setVisible(false);
-
-        player = this.playerCallback();
-      }
-
-      this.input.on("pointermove", (pointer) => {
-        // Set the player's position to the cursor's position with an offset
-        // player.x = pointer.x + offset.x;
-        // player.y = pointer.y + offset.y;
-        const deltaX = pointer.x - lastPlayerPosition.x;
-        const deltaY = pointer.y - lastPlayerPosition.y;
-
-        // Adjust the player's position based on the pointer movement
-        player.x += deltaX;
-        player.y += deltaY;
+        this.player.x += deltaX;
+        this.player.y += deltaY;
 
         // Update the last pointer position
-        lastPlayerPosition = { x: pointer.x, y: pointer.y };
-      });
-
-      timer.paused = false;
+        this.lastPlayerPosition = { x: pointer.x, y: pointer.y };
+      }
     });
 
     // this.GameScreenHandler = new GameScreenHandler(this);
@@ -415,10 +377,5 @@ class Obstacle {
       frameRate: frameRate,
       repeat: repeat,
     });
-
-    // if (this.scene.anims.exists(givenKey)) {
-    //   this.scene.anims.get(givenKey).destroy();
-    // console.log("destroyed fly");
-    // }
   }
 }
