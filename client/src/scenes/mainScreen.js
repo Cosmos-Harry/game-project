@@ -35,7 +35,7 @@ export default class MainScreen extends Phaser.Scene {
 
     play.on("pointerdown", () => {
       this.scene.start("Game");
-      // this.sound.play("main-menu", { loop: true });
+      this.sound.play("main-menu", { loop: true });
     });
 
     play.on("pointerover", () => {
