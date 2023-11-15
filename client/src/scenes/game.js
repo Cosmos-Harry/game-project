@@ -38,10 +38,13 @@ export default class Game extends Phaser.Scene {
 
     let numberOfShuttles = 1;
     let gameOverText;
-    let pauseText;
     let elapsedTime = 0; // Initialize the elapsed time
     let playerHit = null;
     let shuttle;
+    let bird;
+    let jet;
+    let asteroid;
+    let asteroidShowerEnd = false;
 
     this.bgCallback = () => {
       new Obstacle(this).createSprite(
@@ -60,7 +63,7 @@ export default class Game extends Phaser.Scene {
         "player",
         200,
         450,
-        0.07,
+        0.06,
         null,
         null,
         1,
@@ -88,7 +91,7 @@ export default class Game extends Phaser.Scene {
     };
     this.birdCallback = () => {
       const randomY = Phaser.Math.Between(0, this.physics.world.bounds.height);
-      const bird = new Obstacle(this).createSprite(
+      bird = new Obstacle(this).createSprite(
         "bird",
         500,
         randomY,
@@ -113,7 +116,7 @@ export default class Game extends Phaser.Scene {
 
     this.jetCallback = () => {
       const randomY = Phaser.Math.Between(0, this.physics.world.bounds.height);
-      const jet = new Obstacle(this).createSprite(
+      jet = new Obstacle(this).createSprite(
         "jet",
         0,
         randomY,
@@ -140,7 +143,7 @@ export default class Game extends Phaser.Scene {
 
     this.asteroidCallback = () => {
       const randomX = Phaser.Math.Between(0, this.physics.world.bounds.width);
-      const asteroid = new Obstacle(this).createSprite(
+      asteroid = new Obstacle(this).createSprite(
         "asteroid",
         randomX,
         800,
@@ -293,11 +296,11 @@ export default class Game extends Phaser.Scene {
         if (elapsedTime >= 1 && elapsedTime % 5 === 0) {
           this.cloudCallback();
         }
-        if (elapsedTime % 2 === 0) {
+        if (elapsedTime % 2 === 0 && asteroidShowerEnd === false) {
           this.shuttleCallback();
         }
 
-        if (elapsedTime % 5 === 0) {
+        if (elapsedTime % 5 === 0 && asteroidShowerEnd === false) {
           this.birdCallback();
         }
 
@@ -311,12 +314,65 @@ export default class Game extends Phaser.Scene {
         if (elapsedTime >= 14 && elapsedTime % 7 === 0) {
           this.asteroidCallback();
         }
-        if (elapsedTime >= 50 && elapsedTime % 3 === 0) {
+        if (
+          elapsedTime >= 50 &&
+          elapsedTime % 3 === 0 &&
+          asteroidShowerEnd === false
+        ) {
           this.jetCallback();
+        }
+
+        if (elapsedTime >= 30 && elapsedTime < 62) {
+          asteroidShowerEnd = true;
+        } else {
+          asteroidShowerEnd = false;
+        }
+
+        if (elapsedTime >= 30 && elapsedTime < 50) {
+          if (shuttle) {
+            shuttle.destroy();
+          }
+          if (bird) {
+            bird.destroy();
+          }
+          if (jet) {
+            jet.destroy();
+          }
+          if (elapsedTime % 1 === 0) {
+            this.asteroidCallback();
+          }
+
+          const asteroidAlert = this.add.text(200, 100, "ASTEROID SHOWER", {
+            fontFamily: "Gluten",
+            fontSize: "36px",
+            color: "#ff0000",
+            stroke: "#ffffff",
+            strokeThickness: 4,
+          });
+
+          // Set origin to center the text
+          asteroidAlert.setOrigin(0.5);
+
+          // Define the tween configuration
+          const tweenConfig = {
+            targets: asteroidAlert,
+            duration: 500, // Duration of the tween in milliseconds
+            scaleX: 1.0, // Scale factor in the x-axis
+            scaleY: 1.2, // Scale factor in the y-axis
+            alpha: 0, // Transparency, 0 means fully transparent
+            yoyo: true, // Yoyo effect (reverses the tween)
+            repeat: 10, // Repeat indefinitely
+            ease: "Linear", // Easing function, 'Linear' for constant speed
+            onComplete: function (tween) {
+              asteroidAlert.destroy();
+            },
+          };
+
+          // Create the tween
+          this.tweens.add(tweenConfig);
         }
       },
     });
-
     this.bgCallback();
     this.player = this.playerCallback();
     this.physics.world.setBounds(0, 0, 400, 800); // Set world bounds
