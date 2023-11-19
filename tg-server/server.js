@@ -4,6 +4,7 @@ const path = require("path");
 require("dotenv").config();
 
 const TOKEN = process.env.TOKEN;
+const botUrl = "https://game-backend-6acb.onrender.com";
 const gameName = "freeFall";
 const port = process.env.PORT || 3000 || 10000;
 const bot = new tgBot(TOKEN);
@@ -57,14 +58,12 @@ bot.on("inline_query", (query) => {
   bot.answerInlineQuery(query.id, results);
 });
 
-// app.post(`/freefall-webhook`, (req, res) => {
-//   const body = req.body;
-//   bot.processUpdate(body);
-//   res.sendStatus(200); // Respond to the webhook request
-// });
+bot.setWebHook(`${botUrl}/bot${TOKEN}`);
 
-const webhookURL = "https://game-backend-6acb.onrender.com";
-bot.setWebHook(webhookURL);
+app.post(`/bot${TOKEN}`, (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
