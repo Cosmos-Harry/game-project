@@ -5,7 +5,7 @@ require("dotenv").config();
 
 const TOKEN = process.env.TOKEN;
 const gameName = "freeFall";
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000 || 10000;
 const bot = new tgBot(TOKEN);
 const app = express();
 
