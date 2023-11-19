@@ -57,13 +57,13 @@ bot.on("inline_query", (query) => {
   bot.answerInlineQuery(query.id, results);
 });
 
-app.post(`/freefall-webhook`, (req, res) => {
-  const body = req.body;
-  bot.processUpdate(body);
-  res.sendStatus(200); // Respond to the webhook request
-});
+// app.post(`/freefall-webhook`, (req, res) => {
+//   const body = req.body;
+//   bot.processUpdate(body);
+//   res.sendStatus(200); // Respond to the webhook request
+// });
 
-const webhookURL = "https://game-backend-6acb.onrender.com/freefall-webhook";
+const webhookURL = "https://game-backend-6acb.onrender.com";
 bot.setWebHook(webhookURL);
 
 app.listen(port, () => {
