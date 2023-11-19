@@ -1,45 +1,56 @@
-const express = require("express");
-const http = require("http").createServer(express);
-// const io = require("socket.io")(http);
-const bodyParser = require("body-parser");
-const axios = require("axios");
 const tgBot = require("node-telegram-bot-api");
+const express = require("express");
+const path = require("path");
 require("dotenv").config();
 
 const TOKEN = process.env.TOKEN;
-const GAME_ENDPOINT = "/game";
-
+const gameName = "freeFall";
+const port = process.env.PORT || 3000;
 const bot = new tgBot(TOKEN, { polling: true });
 const app = express();
 
-// Use body-parser to parse incoming requests
-app.use(bodyParser.json());
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "client", "index.html"));
+});
 
-bot.onText(/\/game/, async (message) => {
-  console.log("Received /game command:", message);
-  const chatId = message.chat.id;
+bot.onText(/\/game/, (msg) => {
+  const chatId = msg.chat.id;
+  bot.sendGame(chatId, gameName);
+});
 
-  try {
-    // Make an HTTP request to your Vercel game URL
-    const response = await axios.get("https://game-project-rho.vercel.app");
+bot.on("callback_query", (callbackQuery) => {
+  const chatId = callbackQuery.message.chat.id;
+  bot.answerCallbackQuery(callbackQuery.id, {
+    url: `https://game-project-rho.vercel.app`,
+  });
+});
 
-    // Forward the game content to the Telegram chat
-    bot.sendMessage(chatId, "Hello, this is your game!");
-    bot.sendMessage(chatId, response.data);
-  } catch (error) {
-    // Handle errors, e.g., the game URL is not accessible
-    console.error("Error fetching game content:", error);
-    bot.sendMessage(chatId, "Error fetching game content");
+bot.on("inline_query", (query) => {
+  const inlineQuery = query.query;
+  const results = [];
+
+  if (inlineQuery === "free fall"||"Free Fall"|| "freeFall"|| "Free fall"|| "free Fall") {
+    const result = {
+      type: "game",
+      id: "1",
+      game_short_name: "freeFall",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "Play Now",
+              callback_game: "game",
+            },
+          ],
+        ],
+      },
+    };
+
+    results.push(result);
   }
+  bot.answerInlineQuery(query.id, results);
 });
 
-bot.on("message", (message) => {
-  const chatId = message.chat.id;
-  const text = message.text;
-
-  console.log("received message:", text);
-});
-
-http.listen(3000, function () {
-  console.log("Server Started");
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
