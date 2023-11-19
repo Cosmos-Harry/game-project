@@ -46,7 +46,7 @@ bot.on("inline_query", (query) => {
           [
             {
               text: "Play Now",
-              callback_game: "game",
+              callback_game: gameName,
             },
           ],
         ],
