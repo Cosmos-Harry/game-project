@@ -60,6 +60,8 @@ bot.on("inline_query", (query) => {
 
 bot.setWebHook(`${botUrl}/bot${TOKEN}`);
 
+app.use(express.json());
+
 app.post(`/bot${TOKEN}`, (req, res) => {
   bot.processUpdate(req.body);
   res.sendStatus(200);
