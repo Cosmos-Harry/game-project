@@ -6,7 +6,7 @@ require("dotenv").config();
 const TOKEN = process.env.TOKEN;
 const gameName = "freeFall";
 const port = process.env.PORT || 3000;
-const bot = new tgBot(TOKEN, { polling: true });
+const bot = new tgBot(TOKEN);
 const app = express();
 
 app.get("/", (req, res) => {
@@ -29,7 +29,13 @@ bot.on("inline_query", (query) => {
   const inlineQuery = query.query;
   const results = [];
 
-  if (inlineQuery === "free fall"||"Free Fall"|| "freeFall"|| "Free fall"|| "free Fall") {
+  if (
+    inlineQuery === "free fall" ||
+    inlineQuery === "Free Fall" ||
+    inlineQuery === "freeFall" ||
+    inlineQuery === "Free fall" ||
+    inlineQuery === "free Fall"
+  ) {
     const result = {
       type: "game",
       id: "1",
@@ -50,6 +56,9 @@ bot.on("inline_query", (query) => {
   }
   bot.answerInlineQuery(query.id, results);
 });
+
+const webhookURL = "https://game-backend-6acb.onrender.com";
+bot.setWebHook(webhookURL);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
